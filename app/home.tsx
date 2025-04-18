@@ -9,17 +9,37 @@ import {
   getContactsAsync,
   requestPermissionsAsync,
 } from "expo-contacts";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 
 const Home = () => {
   const [search, setSearch] = useState("");
+
+  const [searchedContact, setSearchedContact] = useState<MyContactsType[]>([]);
 
   const { data: mobileContacts } = useContacts();
 
   const onChangeSearch = (newText: string) => {
     setSearch(newText);
   };
+
+  useEffect(() => {
+    setSearchedContact(
+      mobileContacts?.filter(
+        (c) => c.name.includes(search) || c.phoneNumber?.includes(search)
+      ) ?? []
+    );
+  }, [search]);
+
+  useEffect(() => {
+    return () => {
+      console.log("cleaned................");
+      setSearch("");
+      setSearchedContact([]);
+    };
+  }, []);
+
+  const contacts = searchedContact.length ? searchedContact : mobileContacts;
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -31,7 +51,7 @@ const Home = () => {
         inputContainerStyle={styles.inputContainerStyle}
         errorStyle={{ display: "none" }}
       />
-      {mobileContacts?.map((item) => (
+      {contacts?.map((item) => (
         <Contacts
           key={item.phoneNumber + item.name}
           name={item.name ?? ""}

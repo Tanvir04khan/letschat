@@ -1,12 +1,20 @@
 import React from "react";
 import { Avatar, ListItem } from "@rneui/base";
 import { StyleSheet, Text } from "react-native";
+import useUserStatusStore from "@/store/userStatusStore";
 
 const Header = ({ path }: { path: string }) => {
+  const chattingWith = useUserStatusStore((state) => state.chattingWith);
+  const onlineUsers = useUserStatusStore((state) => state.onlineUsers);
+
+  console.log(onlineUsers);
+
   return (
     <>
-      {path !== "[userId]" && <Text style={styles.headerText}>Let'sChat</Text>}
-      {path === "[userId]" && (
+      {path !== "[receiverPhoneNumber]" && (
+        <Text style={styles.headerText}>Let'sChat</Text>
+      )}
+      {path === "[receiverPhoneNumber]" && (
         <ListItem>
           <Avatar
             rounded
@@ -15,9 +23,15 @@ const Header = ({ path }: { path: string }) => {
             }}
           />
           <ListItem.Content>
-            <ListItem.Title style={styles.nameText}>John Doe</ListItem.Title>
+            <ListItem.Title style={styles.nameText}>
+              {chattingWith?.name}
+            </ListItem.Title>
             <ListItem.Subtitle style={styles.messageText}>
-              President
+              {onlineUsers.some(
+                (phoneNumber) => phoneNumber === chattingWith?.phoneNumber
+              )
+                ? "Online"
+                : "Offline"}
             </ListItem.Subtitle>
           </ListItem.Content>
         </ListItem>

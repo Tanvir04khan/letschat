@@ -6,6 +6,6 @@ export const routes: {
   { path: "camera", headerShown: false },
   { path: "index", headerShown: true },
   { path: "home", headerShown: true },
-  { path: "[userId]", headerShown: true },
+  { path: "[receiverPhoneNumber]", headerShown: true },
   { path: "+not-found", headerShown: true },
 ];

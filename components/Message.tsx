@@ -4,13 +4,13 @@ import { StyleSheet } from "react-native";
 import { Text, View } from "react-native";
 
 const Message = ({
-  id,
+  messageId,
   messageType,
   message,
   sentByUser,
 }: {
-  id: number;
-  messageType: "text" | "image";
+  messageId: string;
+  messageType: string;
   message: string;
   sentByUser: boolean;
 }) => {
@@ -32,7 +32,7 @@ const Message = ({
         {messageType === "image" && (
           <Image
             source={{
-              uri: "https://randomuser.me/api/portraits/men/36.jpg",
+              uri: message,
             }}
             containerStyle={{ width: 100, height: 100 }}
           />

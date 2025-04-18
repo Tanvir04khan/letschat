@@ -36,6 +36,10 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "MYAUTH_BACKEND_ENDPOINT": "http://192.168.31.143:5000",
+      "LETSCHAT_BACKEND_ENDPOINT": "http://192.168.31.143:3000"
     }
   }
 }

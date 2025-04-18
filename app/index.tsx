@@ -3,16 +3,11 @@ import { View, Text, StyleSheet } from "react-native";
 import { Overlay } from "@rneui/themed";
 import { Button } from "@rneui/base";
 import Signin from "@/components/Signin";
-import VerifyOTP from "@/components/VerifyOTP";
-import { router } from "expo-router";
+import Signup from "@/components/Signup";
 
 const BottomDrawer = () => {
   const [visible, setVisible] = useState(false);
-  const [overlayType, setOverlayType] = useState<"signin" | "verify">("signin");
-
-  useEffect(() => {
-    if (visible) router.replace("/home");
-  }, [visible]);
+  const [overlayType, setOverlayType] = useState<"signin" | "signup">("signin");
 
   return (
     <View style={styles.container}>
@@ -20,15 +15,24 @@ const BottomDrawer = () => {
       <Text style={styles.text2}>
         Where every conversation is a chance to connect, share and grow.
       </Text>
-      <Button
-        title="Sign in"
-        buttonStyle={styles.button}
-        onPress={() => {
-          setOverlayType("signin");
-          setVisible(true);
-        }}
-      />
-
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Signin"
+          buttonStyle={styles.button}
+          onPress={() => {
+            setOverlayType("signin");
+            setVisible(true);
+          }}
+        />
+        <Button
+          title="Signup"
+          buttonStyle={styles.button}
+          onPress={() => {
+            setOverlayType("signup");
+            setVisible(true);
+          }}
+        />
+      </View>
       {/* Bottom Drawer */}
       <Overlay
         isVisible={visible}
@@ -37,11 +41,9 @@ const BottomDrawer = () => {
       >
         <View style={styles.content}>
           {overlayType === "signin" ? (
-            <Signin
-              setOverlayType={(value: "verify") => setOverlayType(value)}
-            />
+            <Signin handleOverlayVisibility={(val) => setVisible(val)} />
           ) : (
-            <VerifyOTP dismissOverlay={(value: false) => setVisible(value)} />
+            <Signup handleOverlayVisibility={(val) => setVisible(val)} />
           )}
         </View>
       </Overlay>
@@ -56,6 +58,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  buttonContainer: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 20,
   },
   drawer: {
     position: "absolute",

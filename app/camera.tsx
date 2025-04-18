@@ -5,23 +5,30 @@ import React, { useRef, useState } from "react";
 import { PixelRatio, StyleSheet } from "react-native";
 import { TouchableOpacity, View } from "react-native";
 import { captureRef } from "react-native-view-shot";
+import * as FileSystem from "expo-file-system";
 
 const camera = () => {
   const [facing, setFacing] = useState<"back" | "front">("back");
-  const cameraRef = useRef(null);
+  const cameraRef = useRef<CameraView | null>(null);
 
   const onCapturePic = async () => {
-    const result = await captureRef(cameraRef, {
-      result: "tmpfile",
-      height: 1080 / PixelRatio.get(),
-      width: 1080 / PixelRatio.get(),
-      quality: 1,
-      format: "png",
-    });
-    router.push({
-      pathname: "/clickedPhoto/[clickedPhoto]",
-      params: { clickedPhoto: decodeURIComponent(result) },
-    });
+    if (cameraRef.current) {
+      const newPath = `${
+        FileSystem.cacheDirectory
+      }${new Date().getTime()}-letsChatImage.jpg`;
+
+      const result = await cameraRef.current.takePictureAsync();
+      if (!result) return;
+      await FileSystem.moveAsync({
+        from: result.uri,
+        to: newPath,
+      });
+
+      router.push({
+        pathname: "/clickedPhoto/[clickedPhoto]",
+        params: { clickedPhoto: newPath },
+      });
+    }
   };
 
   return (

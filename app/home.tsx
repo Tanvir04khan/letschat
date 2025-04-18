@@ -1,55 +1,43 @@
 import Contacts from "@/components/Contacts";
-import Header from "@/components/Header";
-import { Icon, Input, Text } from "@rneui/base";
+import useContacts from "@/hooks/useContacts";
+import { MyContactsType } from "@/type";
+import { Icon, Input } from "@rneui/base";
+import { useQuery } from "@tanstack/react-query";
 import {
+  Contact,
   Fields,
   getContactsAsync,
   requestPermissionsAsync,
 } from "expo-contacts";
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 
-interface HomeScreenPropsType {
-  children?: ReactNode;
-}
+const Home = () => {
+  const [search, setSearch] = useState("");
 
-const Home = ({ children }: HomeScreenPropsType) => {
-  const [serach, setSearch] = useState("");
-  const [contacts, setContacts] = useState<
-    { name: string; phoneNumber: string }[]
-  >([]);
+  const { data: mobileContacts } = useContacts();
 
   const onChangeSearch = (newText: string) => {
     setSearch(newText);
   };
 
-  const getContacts = async () => {
-    const { status } = await requestPermissionsAsync();
-    if (status === "granted") {
-      const { data } = await getContactsAsync({
-        fields: [Fields.Name, Fields.PhoneNumbers],
-      });
-
-      console.log(data);
-    }
-  };
-
-  useEffect(() => {
-    getContacts();
-  }, []);
-
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <Input
         placeholder="Search..."
-        value={serach}
+        value={search}
         onChangeText={onChangeSearch}
         leftIcon={<Icon name="search" size={24} color="black" />}
         inputContainerStyle={styles.inputContainerStyle}
         errorStyle={{ display: "none" }}
       />
-      {contacts.map((item, i) => (
-        <Contacts key={item.phoneNumber} />
+      {mobileContacts?.map((item) => (
+        <Contacts
+          key={item.phoneNumber + item.name}
+          name={item.name ?? ""}
+          status={"Offline"}
+          phoneNumber={item.phoneNumber ?? ""}
+        />
       ))}
     </ScrollView>
   );
